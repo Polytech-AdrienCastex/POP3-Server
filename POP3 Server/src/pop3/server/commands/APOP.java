@@ -28,11 +28,11 @@ public class APOP extends Command
     {
         if(parameters.length == 2)
         {
-            File userDirectory = User.getFolder(parameters[0], parameters[1]);
+            User user = new User(parameters[0], parameters[1]);
             
-            if(userDirectory.exists() && userDirectory.canRead())
+            if(user.canAccess())
             {
-                cmdResult.setUser(new User(parameters[0], userDirectory));
+                cmdResult.setUser(user);
                 cmdResult.setExecutedWell(true);
                 
                 return "+OK welcome";

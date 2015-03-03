@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.nio.CharBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -31,12 +28,19 @@ public class Session implements Runnable
         obs = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         
         currentState = startState;
+        
+        sessionID = s_sessionID++;
     }
     
-    private Socket socket;
+    private final int sessionID;
+    private static int s_sessionID = 1;
     
-    private BufferedReader ibs;
-    private BufferedWriter obs;
+    private final Socket socket;
+    
+    private final BufferedReader ibs;
+    private final BufferedWriter obs;
+    
+    private State currentState;
     
     public void close()
     {
@@ -49,8 +53,6 @@ public class Session implements Runnable
         { }
     }
     
-    private State currentState;
-    
     @Override
     public void run()
     {
@@ -61,7 +63,7 @@ public class Session implements Runnable
         {
             obs.write("+OK server ready\r\n");
             obs.flush();
-            System.out.println("Session started");
+            System.out.println("[" + sessionID + "] Session started");
             
             while(true)
             {
@@ -70,15 +72,17 @@ public class Session implements Runnable
                 do
                 {
                     int len = ibs.read(buffer);
-                    System.out.println(len);
+                    if(len == -1) // Client closed
+                        break;
                     str += String.valueOf(buffer, 0, len);
                 } while (!str.endsWith("\r\n"));
 
-                // Clear the begining of the received string
+                // Clear the start and the end of the received string
                 int nb = 0;
                 while(str.startsWith(" "))
                     nb++;
-                str = str.substring(nb);
+                str = str.substring(nb, str.length() - 2 - nb);
+                System.out.println("[" + sessionID + ":INPUT] \"" + str + "\"");
 
                 // Split the string
                 int spaceIndex = str.indexOf(" ");
@@ -99,15 +103,16 @@ public class Session implements Runnable
                 obs.flush();
                 currentState = currentState.getNewState();
                 
-                if(sessionResult.isExit())
+                if(currentState == null)
                     break; // Exit the session
             }
         }
         catch (IOException ex)
         { // Timeout
+            System.out.println("[" + sessionID + "] Timeout");
         }
         
-        System.out.println("Closing");
+        System.out.println("[" + sessionID + "] Closing");
         close();
     }
 }

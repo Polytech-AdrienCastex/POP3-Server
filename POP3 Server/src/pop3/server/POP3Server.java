@@ -17,12 +17,14 @@ public class POP3Server
 {
     public static void main(String[] args)
     {
+        final int port = 1024;
+        
         try
         {
             List<Thread> sessions = new ArrayList<>();
         
             // Start the server
-            ServerSocket ss = new ServerSocket(1024);
+            ServerSocket ss = new ServerSocket(port);
             while(true)
             { // Each client connected via TCP
                 Socket client = ss.accept();
@@ -34,7 +36,9 @@ public class POP3Server
             }
         }
         catch (IOException ex)
-        { }
+        {
+            System.err.println("[ERROR] Server port " + port + " refused");
+        }
     }
     
 }

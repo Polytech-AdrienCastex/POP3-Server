@@ -14,7 +14,7 @@ import java.util.List;
  */
 public abstract class State
 {
-    public State(Command[] commands)
+    public void Initialize(Command[] commands)
     {
         _nextState = this;
         
@@ -33,7 +33,7 @@ public abstract class State
     }
     //**********************
     
-    private final Command[] commands;
+    private Command[] commands;
     
     public String Run(String cmd, String[] parameters, CommandResult cmdResultGlobal)
     {
