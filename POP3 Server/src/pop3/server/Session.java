@@ -25,7 +25,7 @@ public class Session implements Runnable
     public Session(Socket socket, State startState) throws IOException
     {
         this.socket = socket;
-        //socket.setSoTimeout(1000);
+        socket.setSoTimeout(10000);
         
         ibs = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         obs = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -55,6 +55,7 @@ public class Session implements Runnable
     public void run()
     {
         char[] buffer = new char[2500];
+        CommandResult sessionResult = new CommandResult();
         
         try
         {
@@ -94,15 +95,19 @@ public class Session implements Runnable
                     parameters = str.substring(spaceIndex + 1).split(" ");
                 }
 
-                obs.write(currentState.Run(cmd, parameters) + "\r\n");
+                obs.write(currentState.Run(cmd, parameters, sessionResult) + "\r\n");
                 obs.flush();
                 currentState = currentState.getNewState();
+                
+                if(sessionResult.isExit())
+                    break; // Exit the session
             }
         }
         catch (IOException ex)
         { // Timeout
-            System.out.println("Closing");
-            close();
         }
+        
+        System.out.println("Closing");
+        close();
     }
 }

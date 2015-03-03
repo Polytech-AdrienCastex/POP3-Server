@@ -35,17 +35,15 @@ public abstract class State
     
     private final Command[] commands;
     
-    public String Run(String cmd, String[] parameters)
+    public String Run(String cmd, String[] parameters, CommandResult cmdResultGlobal)
     {
-        Boolean successed;
-        
         for(Command c : commands)
         {
             if(c.is(cmd))
             {
-                successed = false;
-                String result = c.Run(parameters, successed);
-                if(successed)
+                CommandResult cmdResult = new CommandResult(cmdResultGlobal);
+                String result = c.Run(parameters, cmdResult);
+                if(cmdResult.isExecutedWell())
                 {
                     setNewState(c.getNextState());
                     System.out.println(":: Command received : " + cmd + " [SUCCESS]");

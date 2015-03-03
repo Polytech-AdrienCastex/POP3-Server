@@ -22,5 +22,5 @@ public abstract class Command
         return nextState;
     }
 
-    public abstract String Run(String[] parameters, Boolean outSuccessed);
+    public abstract String Run(String[] parameters, CommandResult cmdResult);
 }
