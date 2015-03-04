@@ -57,6 +57,6 @@ public abstract class State
         
         System.out.println(":: Command received : " + cmd + " [NOT FOUND]");
         
-        return "+ERR command not found : " + cmd.trim().toUpperCase();
+        return "-ERR command not found : " + cmd.trim().toUpperCase();
     }
 }

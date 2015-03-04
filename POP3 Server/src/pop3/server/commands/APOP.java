@@ -1,21 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package pop3.server.commands;
 
-import java.io.File;
 import pop3.server.Command;
 import pop3.server.CommandResult;
 import pop3.server.State;
 import pop3.server.User;
 
-/**
- *
- * @author p1002239
- */
 public class APOP extends Command
 {
     public APOP(State nextState)
@@ -35,11 +25,15 @@ public class APOP extends Command
                 cmdResult.setUser(user);
                 cmdResult.setExecutedWell(true);
                 
-                return "+OK welcome";
+                int nbmsg = user.countMessages();
+                if(nbmsg > 0)
+                    return "+OK maildrop has " + nbmsg + " message" + (nbmsg > 1 ? "s" : "") + " (" + user.countMessageTotalLength() + " octets)";
+                else
+                    return "+OK maildrop is empty";
             }
         }
         
         cmdResult.setExecutedWell(false);
-        return "-ERR ...";
+        return "-ERR permission non accordée";
     }
 }

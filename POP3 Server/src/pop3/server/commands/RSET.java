@@ -18,6 +18,11 @@ public class RSET extends Command
         cmdResult.getUser().clearMarks();
         
         cmdResult.setExecutedWell(true);
-        return "+OK maildrop has " + cmdResult.getUser().countMessages() + " messages (" + cmdResult.getUser().countMessageTotalLength() + " octets)";
+        
+        int nbmsg = cmdResult.getUser().countMessages();
+        if(nbmsg > 0)
+            return "+OK maildrop has " + nbmsg + " message" + (nbmsg > 1 ? "s" : "") + " (" + cmdResult.getUser().countMessageTotalLength() + " octets)";
+        else
+            return "+OK maildrop is empty";
     }
 }

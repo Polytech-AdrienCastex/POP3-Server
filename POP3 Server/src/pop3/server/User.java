@@ -3,6 +3,7 @@ package pop3.server;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +28,53 @@ public class User
         return userName;
     }
     
+    public String[] getNullMarkedMessageList()
+    {
+        String[] msgs = userFolder.list();
+        List<String> msgsNotMarked = new ArrayList<>();
+        
+        for(int i = 0; i < msgs.length; i++)
+            if(!isMarked(i))
+                msgsNotMarked.add(msgs[i]);
+            else
+                msgsNotMarked.add(null);
+        
+        String[] returnMsgs = new String[msgsNotMarked.size()];
+        msgsNotMarked.toArray(returnMsgs);
+        return returnMsgs;
+    }
+    public String[] getNotMarkedMessageList()
+    {
+        String[] msgs = userFolder.list();
+        List<String> msgsNotMarked = new ArrayList<>();
+        
+        for(int i = 0; i < msgs.length; i++)
+            if(!isMarked(i))
+                msgsNotMarked.add(msgs[i]);
+        
+        String[] returnMsgs = new String[msgsNotMarked.size()];
+        msgsNotMarked.toArray(returnMsgs);
+        return returnMsgs;
+    }
     public String[] getMessageList()
     {
         return userFolder.list();
+    }
+    
+    public boolean isMarked(String id)
+    {
+        try
+        {
+            return isMarked(Integer.parseInt(id));
+        }
+        catch (NumberFormatException ex)
+        {
+            return false;
+        }
+    }
+    public boolean isMarked(int id)
+    {
+        return markedMsgId.contains(id);
     }
     
     public boolean exists()
@@ -50,14 +95,14 @@ public class User
     
     public int countMessages()
     {
-        return getMessageList().length;
+        return getNotMarkedMessageList().length;
     }
     public int countMessageTotalLength()
     {
         int totalLength = 0;
         
-        for(String f : getMessageList())
-            totalLength += new File(f).length();
+        for(String f : getNotMarkedMessageList())
+            totalLength += new File(getMessageFullPath(f)).length();
         
         return totalLength;
     }
@@ -75,19 +120,22 @@ public class User
     }
     public String readMessage(int id)
     {
+        id--;
         if(id >= 0)
         {
             try
             {
-                String[] msgs = getMessageList();
+                String[] msgs = getNullMarkedMessageList();
                 
-                if(id < msgs.length)
-                    return new String(Files.readAllBytes(Paths.get(msgs[id])));
+                if(id < msgs.length && msgs[id] != null)
+                {
+                    Path p = Paths.get(getMessageFullPath(msgs[id]));
+                    byte[] arr = Files.readAllBytes(p);
+                    return new String(arr, "UTF-8");
+                }
             }
             catch (Exception ex)
-            {
-                return null;
-            }
+            { }
         }
         
         return null;
@@ -113,6 +161,7 @@ public class User
     }
     public boolean messageExists(int id)
     {
+        id--;
         return 0 <= id && id < getMessageList().length;
     }
     
@@ -129,6 +178,7 @@ public class User
     }
     public boolean markMessage(int id)
     {
+        id--;
         if(messageExists(id) && !markedMsgId.contains(id))
         {
             markedMsgId.add(id);
@@ -141,6 +191,11 @@ public class User
     public void clearMarks()
     {
         markedMsgId.clear();
+    }
+    
+    private String getMessageFullPath(String messageName)
+    {
+        return userFolder.getPath() + "/" + messageName;
     }
     
     public static File getFolder(String userName, String password)

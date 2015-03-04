@@ -72,14 +72,14 @@ public class Session implements Runnable
                 do
                 {
                     int len = ibs.read(buffer);
-                    if(len == -1) // Client closed
+                    if(len <= 0) // Client closed
                         break;
                     str += String.valueOf(buffer, 0, len);
                 } while (!str.endsWith("\r\n"));
 
                 // Clear the start and the end of the received string
                 int nb = 0;
-                while(str.startsWith(" "))
+                while(str.startsWith(" ", nb))
                     nb++;
                 str = str.substring(nb, str.length() - 2 - nb);
                 System.out.println("[" + sessionID + ":INPUT] \"" + str + "\"");
@@ -99,7 +99,9 @@ public class Session implements Runnable
                     parameters = str.substring(spaceIndex + 1).split(" ");
                 }
 
-                obs.write(currentState.Run(cmd, parameters, sessionResult) + "\r\n");
+                String msg = currentState.Run(cmd, parameters, sessionResult);
+                System.out.println("[MSG] \"" + msg + "\"");
+                obs.write(msg + "\r\n");
                 obs.flush();
                 currentState = currentState.getNewState();
                 
