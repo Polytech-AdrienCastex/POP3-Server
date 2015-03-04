@@ -7,6 +7,7 @@ import pop3.server.commands.NOOP;
 import pop3.server.commands.QUIT;
 import pop3.server.commands.RETR;
 import pop3.server.commands.RSET;
+import pop3.server.commands.LIST;
 
 
 public class TraitementState extends State
@@ -19,7 +20,8 @@ public class TraitementState extends State
             new DELE(this),
             new NOOP(this),
             new RETR(this),
-            new RSET(this)
+            new RSET(this),
+            new LIST(this)
         });
     }
 }
