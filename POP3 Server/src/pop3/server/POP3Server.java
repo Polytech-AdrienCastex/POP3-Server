@@ -3,12 +3,6 @@ package pop3.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLSocket;
-import pop3.server.states.AuthorizationState;
 
 public class POP3Server
 {

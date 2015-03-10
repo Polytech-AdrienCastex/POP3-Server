@@ -15,7 +15,8 @@ import pop3.server.User;
  *
  * @author p1309208
  */
-public class PASS extends Command {
+public class PASS extends Command
+{
     public PASS(State nextState)
     {
         super("pass", nextState);

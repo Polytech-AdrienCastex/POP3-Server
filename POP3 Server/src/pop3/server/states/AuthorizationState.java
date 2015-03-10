@@ -12,11 +12,13 @@ public class AuthorizationState extends State
 {
     public AuthorizationState()
     {
+        TraitementState next = new TraitementState();
+        
         Initialize(new Command[]
         {
-            new APOP(new TraitementState()),
-            new PASS(new TraitementState()),
-            new USER(new AuthorizationState()),
+            new APOP(next),
+            new PASS(next),
+            new USER(this),
             new QUIT()
         });
     }
