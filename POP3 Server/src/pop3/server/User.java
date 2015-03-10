@@ -10,6 +10,8 @@ import java.util.List;
 
 public class User
 {
+    private static final String USER_FOLDER = "emails_base";
+    
     public User(String userName, String password)
     {
         this.userName = userName;
@@ -23,6 +25,17 @@ public class User
     
     private List<Integer> markedMsgId;
 
+    public static boolean exists(String userName)
+    {
+        userName = userName.toLowerCase() + "@";
+        
+        File f = new File(USER_FOLDER);
+        for(String dir : f.list())
+            if(dir.startsWith(userName))
+                return true;
+        return false;
+    }
+    
     public String getUserName()
     {
         return userName;
@@ -200,6 +213,6 @@ public class User
     
     public static File getFolder(String userName, String password)
     {
-        return new File("emails_base/" + userName.toLowerCase() + ".at." + password);
+        return new File(USER_FOLDER + "/" + userName.toLowerCase() + "@" + password);
     }
 }
