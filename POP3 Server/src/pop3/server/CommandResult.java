@@ -23,6 +23,7 @@ public class CommandResult
     
     private boolean executedWell;
     private User user;
+    private String userName;
     //**********************
     
     
@@ -47,6 +48,17 @@ public class CommandResult
         this.user = user;
         if(cmdResultParent != null)
             cmdResultParent.user = user;
+    }
+    
+    public String getUserName()
+    {
+        return userName;
+    }
+    public void setUserName(String userName)
+    {
+        this.userName = userName;
+        if(cmdResultParent != null)
+            cmdResultParent.userName = userName;
     }
     //**********************
 }
