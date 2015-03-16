@@ -43,7 +43,7 @@ public class User
         for(String dir : f.list())
             if(dir.startsWith(userName))
             {
-                String password = dir.substring(dir.indexOf("@") + 1);
+                String password = dir.substring(userName.length());
                 return AlgoMD5.encode("<" + securedMessage + ">" + password).equals(controlString);
             }
         return false;
@@ -56,7 +56,7 @@ public class User
         for(String dir : f.list())
             if(dir.startsWith(userName))
             {
-                String password = dir.substring(dir.indexOf("@") + 1);
+                String password = dir.substring(userName.length());
                 if(AlgoMD5.encode("<" + securedMessage + ">" + password).equals(controlString))
                     return password;
                 else
