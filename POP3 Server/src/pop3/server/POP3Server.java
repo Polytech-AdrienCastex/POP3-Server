@@ -2,29 +2,39 @@
 package pop3.server;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.stream.Stream;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 
 public class POP3Server
 {
     public static void main(String[] args)
     {
         final int unsecuredPort = 1024;
-        final int securedPort = 1025;
+        final int securedPort = 8000;
         
         try
         {
             // Start the unsecured server
             ServerSocket unsecuredServerSocket = new ServerSocket(unsecuredPort);
             AcceptSession uas = new AcceptSession("unsecured", unsecuredServerSocket);
-            uas.run();
+            new Thread(uas).start();
             
             // Start the secured server
             SSLServerSocketFactory sslfactory = (SSLServerSocketFactory)SSLServerSocketFactory.getDefault();
+            
             ServerSocket securedServerSocket = sslfactory.createServerSocket(securedPort);
+            
+            Object[] array = Arrays.stream(sslfactory.getSupportedCipherSuites()).filter(s -> s.contains("anon")).toArray();
+            ((SSLServerSocket)securedServerSocket).setEnabledCipherSuites(Arrays.copyOf(array, array.length, String[].class));
+            
             AcceptSession sas = new AcceptSession("secured", securedServerSocket);
-            sas.run();
+            new Thread(sas).start();
             
             while(true);
         }

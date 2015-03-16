@@ -35,6 +35,35 @@ public class User
                 return true;
         return false;
     }
+    public static boolean exists(String userName, String securedMessage, String controlString)
+    {
+        userName = userName.toLowerCase() + "@";
+        
+        File f = new File(USER_FOLDER);
+        for(String dir : f.list())
+            if(dir.startsWith(userName))
+            {
+                String password = AlgoMD5.encode(dir.substring(dir.indexOf("@") + 1));
+                return AlgoMD5.encode("<" + securedMessage + ">" + password).equals(controlString);
+            }
+        return false;
+    }
+    public static String extractPassword(String userName, String securedMessage, String controlString)
+    {
+        userName = userName.toLowerCase() + "@";
+        
+        File f = new File(USER_FOLDER);
+        for(String dir : f.list())
+            if(dir.startsWith(userName))
+            {
+                String password = AlgoMD5.encode(dir.substring(dir.indexOf("@") + 1));
+                if(AlgoMD5.encode("<" + securedMessage + ">" + password).equals(controlString))
+                    return password;
+                else
+                    return null;
+            }
+        return null;
+    }
     
     public String getUserName()
     {

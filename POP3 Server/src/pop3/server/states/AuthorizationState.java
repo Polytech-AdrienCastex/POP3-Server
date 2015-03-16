@@ -3,9 +3,10 @@ package pop3.server.states;
 import pop3.server.Command;
 import pop3.server.State;
 import pop3.server.commands.APOP;
-import pop3.server.commands.USER;
+import pop3.server.commands.APOPs;
 import pop3.server.commands.PASS;
 import pop3.server.commands.QUIT;
+import pop3.server.commands.USER;
 
 
 public class AuthorizationState extends State
@@ -16,7 +17,7 @@ public class AuthorizationState extends State
         
         Initialize(new Command[]
         {
-            new APOP(next),
+            new APOPs(next),
             new PASS(next),
             new USER(this),
             new QUIT()

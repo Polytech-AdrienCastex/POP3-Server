@@ -2,6 +2,7 @@
 package pop3.server;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -24,16 +25,14 @@ public class AcceptSession implements Runnable
     {
         try
         {
-            List<Thread> sessions = new ArrayList<>();
-
+            System.out.println("[SERVER] " + serverName + " started on port " + serverSocket.getLocalPort()); 
+            
             while(true)
             { // Each client connected via TCP
                 Socket client = serverSocket.accept();
 
                 Session s = new Session(client, new AuthorizationState());
-                Thread t = new Thread(s); // Run the client session
-                sessions.add(t);
-                t.start();
+                new Thread(s).start(); // Run the client session
             }
         }
         catch (IOException ex)

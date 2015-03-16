@@ -1,12 +1,16 @@
 
 package pop3.server;
 
+import java.lang.management.ManagementFactory;
+import java.util.Date;
+
 public class CommandResult
 {
     public CommandResult()
     {
         executedWell = false;
         user = null;
+        securityMessage = null;
         
         this.cmdResultParent = null;
     }
@@ -14,6 +18,7 @@ public class CommandResult
     {
         executedWell = false;
         user = cmdResultParent.user;
+        securityMessage = cmdResultParent.securityMessage;
         
         this.cmdResultParent = cmdResultParent;
     }
@@ -24,8 +29,18 @@ public class CommandResult
     private boolean executedWell;
     private User user;
     private String userName;
+    private String securityMessage;
     //**********************
     
+    public String getSecurityMessage()
+    {
+        if(securityMessage != null)
+            return securityMessage;
+        
+        securityMessage = ManagementFactory.getRuntimeMXBean().getName();
+        securityMessage = securityMessage.substring(0, securityMessage.indexOf("@")) + "." + new Date().getTime() + "@" + securityMessage.substring(securityMessage.indexOf("@") + 1);
+        return securityMessage;
+    }
     
     //*********** ACCESSORS
     public boolean isExecutedWell()
