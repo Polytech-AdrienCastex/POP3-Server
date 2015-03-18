@@ -30,8 +30,11 @@ public class POP3Server
             
             ServerSocket securedServerSocket = sslfactory.createServerSocket(securedPort);
             
-            Object[] array = Arrays.stream(sslfactory.getSupportedCipherSuites()).filter(s -> s.contains("anon")).toArray();
-            ((SSLServerSocket)securedServerSocket).setEnabledCipherSuites(Arrays.copyOf(array, array.length, String[].class));
+            ((SSLServerSocket)securedServerSocket).setEnabledCipherSuites(
+                    Arrays.stream(sslfactory.getSupportedCipherSuites())
+                            .filter(s -> s.contains("anon"))
+                            .toArray(size -> new String[size])
+            );
             
             AcceptSession sas = new AcceptSession("secured", securedServerSocket);
             new Thread(sas).start();
