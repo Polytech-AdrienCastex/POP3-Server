@@ -112,9 +112,9 @@ public class Session implements Runnable
                     break; // Exit the session
             }
         }
-        catch (IOException ex)
+        catch (Exception ex)
         { // Timeout
-            System.out.println("[" + sessionID + "] Timeout");
+            System.out.println("[" + sessionID + "] Error : " + ex.getMessage());
         }
         
         System.out.println("[" + sessionID + "] Closing");
