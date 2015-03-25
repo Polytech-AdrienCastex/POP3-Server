@@ -14,6 +14,10 @@
     <td><b>Standard</b></td>
     <td>POP3</td>
   </tr>
+  <tr>
+    <td><b>SSL/TLS</b></td>
+    <td>Yes</td>
+  </tr>
 </table>
 
 <br>
